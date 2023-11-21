@@ -69,6 +69,7 @@ public class TextEditor extends JFrame implements ActionListener {
         textArea = new JTextArea();
         textArea.setTabSize(4);
         textArea.setLineWrap(true);
+        textArea.addKeyListener(new TextAreaListener());
 
         scrollPane = new JScrollPane(textArea,
                 JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -314,9 +315,7 @@ public class TextEditor extends JFrame implements ActionListener {
   public void actionPerformed(ActionEvent e){
 
         if(e.getSource()==colorButton){
-        JColorChooser colorChooser = new JColorChooser();
-
-        Color color = colorChooser.showDialog(null, "Pick a Color", Color.BLACK);
+        Color color = JColorChooser.showDialog(null, "Pick a Color", Color.BLACK);
            textArea.setForeground(color);
       }
   }
