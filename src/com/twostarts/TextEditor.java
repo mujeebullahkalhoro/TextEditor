@@ -56,7 +56,7 @@ public class TextEditor extends JFrame implements ActionListener {
     FileWriter writer;
     FileReader reader;
 
-    public TextEditor() {
+    public TextEditor() throws FileNotFoundException {
         this.setTitle("Text Editor");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setMinimumSize(new Dimension(600, 500));
@@ -69,7 +69,8 @@ public class TextEditor extends JFrame implements ActionListener {
         textArea = new JTextArea();
         textArea.setTabSize(4);
         textArea.setLineWrap(true);
-        textArea.addKeyListener(new TextAreaListener());
+        textArea.addKeyListener(new TextAreaListener(textArea));
+        
 
         scrollPane = new JScrollPane(textArea,
                 JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
