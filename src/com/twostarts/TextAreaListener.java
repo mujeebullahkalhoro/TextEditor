@@ -1,8 +1,8 @@
 package com.twostarts;
-
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.ArrayList;
 
 import javax.swing.JTextArea;
 import javax.swing.text.BadLocationException;
@@ -31,6 +31,8 @@ class TextAreaListener implements KeyListener {
         // Highlight the word if not spelled correctly
         if (!isSpelledCorrectly) {
             highlightIncorrectWord(word);
+          
+
         } else {
             // Clear the highlight if the word is spelled correctly
             clearHighlight();
@@ -58,9 +60,9 @@ class TextAreaListener implements KeyListener {
 
     private void highlightIncorrectWord(String word) {
         try {
-          //  int caretPosition = textArea.getCaretPosition();
+            // int caretPosition = textArea.getCaretPosition();
             int start = textArea.getText().toLowerCase().indexOf(word);
-            int end = start+word.length();
+            int end = start + word.length();
             highlighter.addHighlight(start, end, new DefaultHighlighter.DefaultHighlightPainter(Color.RED));
         } catch (BadLocationException ex) {
             ex.printStackTrace();
@@ -69,6 +71,7 @@ class TextAreaListener implements KeyListener {
 
     private void clearHighlight() {
         highlighter.removeAllHighlights();
+        // highlighter.removeHighlight();
     }
 
     @Override

@@ -2,6 +2,9 @@ package com.twostarts;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.PriorityQueue;
 import java.util.Scanner;
 
 class Node {
@@ -19,8 +22,6 @@ class Node {
 }
 
 public class Trie {
-
-    
 
     private static Node root = new Node();
 
@@ -61,8 +62,9 @@ public class Trie {
         }
         return true;
     }
-    public static void loadWords() throws FileNotFoundException{
-        File words = new File("C:\\Users\\bhand\\Desktop\\dsaproject\\src\\com\\twostarts\\20k.txt");
+
+    public static void loadWords() throws FileNotFoundException {
+        File words = new File("src/com/twostarts/20k.txt");
 
         Scanner sc = new Scanner(words);
         while (sc.hasNextLine()) {
@@ -71,22 +73,23 @@ public class Trie {
         }
     }
 
-    public static void main(String[] args) throws FileNotFoundException{
-        Trie trie = new Trie();
-        
-        // File words = new File("C:\\Users\\bhand\\Desktop\\dsaproject\\src\\com\\twostarts\\20k.txt");
+   
 
-        // Scanner sc = new Scanner(words);
-        // while (sc.hasNextLine()) {
-        //     String word = sc.nextLine();
-        //     trie.insert(word);
-        // }
-        String s="would you t";
-        s=s.trim();
+    public static void main(String[] args) throws FileNotFoundException {
+        Trie trie = new Trie();
+
+        File words = new File("C:\\Users\\bhand\\Desktop\\dsaproject\\src\\com\\twostarts\\20k.txt");
+
+        Scanner sc = new Scanner(words);
+        while (sc.hasNextLine()) {
+            String word = sc.nextLine();
+            trie.insert(word);
+        }
+        String s = "would you t";
+        s = s.trim();
         System.out.println(s);
         trie.loadWords();
         System.out.println(trie.search("would"));
-        
 
     }
 }
