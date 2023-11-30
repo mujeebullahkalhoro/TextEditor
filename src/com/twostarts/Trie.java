@@ -1,8 +1,10 @@
+
 package com.twostarts;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Scanner;
@@ -15,7 +17,6 @@ class Node {
         children = new Node[26]; // a to z;
         for (int i = 0; i < children.length; i++) {
             children[i] = null;
-
         }
         eow = false;
     }
@@ -29,36 +30,46 @@ public class Trie {
         Node current = root;
 
         for (int i = 0; i < word.length(); i++) {
-            int indx = word.charAt(i) - 'a';
+            char currentChar = word.charAt(i);
 
-            if (current.children[indx] == null) {
-                // add new node;
-                current.children[indx] = new Node();
+            // Check if the character is a lowercase letter
+            if ('a' <= currentChar && currentChar <= 'z') {
+                int index = currentChar - 'a';
 
+                if (current.children[index] == null) {
+                    // add new node;
+                    current.children[index] = new Node();
+                }
+
+                if (i == word.length() - 1) {
+                    current.children[index].eow = true;
+                }
+
+                current = current.children[index];
             }
-            if (i == word.length() - 1) {
-                current.children[indx].eow = true;
-            }
-            current = current.children[indx];
-
         }
     }
 
     public boolean search(String key) {
         Node current = root;
         for (int i = 0; i < key.length(); i++) {
-            int indx = key.charAt(i) - 'a';
-            Node node = current.children[indx];
+            char currentChar = key.charAt(i);
 
-            if (node == null) {
-                return false;
+            // Check if the character is a lowercase letter
+            if ('a' <= currentChar && currentChar <= 'z') {
+                int index = currentChar - 'a';
+                Node node = current.children[index];
 
+                if (node == null) {
+                    return false;
+                }
+
+                if (i == key.length() - 1 && !node.eow) {
+                    return false;
+                }
+
+                current = current.children[index];
             }
-            if (i == key.length() - 1 && node.eow == false) {
-                return false;
-            }
-            current = current.children[indx];
-
         }
         return true;
     }
@@ -73,7 +84,39 @@ public class Trie {
         }
     }
 
-   
+    public List<String> getSuggestions(String word) {
+        if (word.isEmpty()) {
+            return Collections.emptyList(); // Return an empty list if the input string is empty
+        }
+        PriorityQueue<String> suggestions = new PriorityQueue<>();
+        collectSuggestions(root, word, "", suggestions);
+        return new ArrayList<>(suggestions);
+    }
+
+    private void collectSuggestions(Node node, String remainingWord, String currentPrefix,
+            PriorityQueue<String> suggestions) {
+        if (node == null) {
+            return;
+        }
+
+        if (remainingWord.isEmpty() && node.eow) {
+            suggestions.offer(currentPrefix);
+            if (suggestions.size() > 4) {
+                suggestions.poll(); // Remove the suggestion with the highest edit distance
+            }
+        }
+
+        for (int i = 0; i < 26; i++) {
+            char ch = (char) ('a' + i);
+            if (!remainingWord.isEmpty() && ch == remainingWord.charAt(0)) {
+                collectSuggestions(node.children[i], remainingWord.substring(1),
+                        currentPrefix + ch, suggestions);
+            } else {
+                collectSuggestions(node.children[i], remainingWord,
+                        currentPrefix + ch, suggestions);
+            }
+        }
+    }
 
     public static void main(String[] args) throws FileNotFoundException {
         Trie trie = new Trie();
@@ -90,6 +133,5 @@ public class Trie {
         System.out.println(s);
         trie.loadWords();
         System.out.println(trie.search("would"));
-
     }
 }

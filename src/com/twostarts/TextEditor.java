@@ -47,7 +47,7 @@ public class TextEditor extends JFrame implements ActionListener {
 
     // Text content;
     JScrollPane scrollPane;
-    JTextArea textArea;
+    JTextPane textPane;
 
     JFileChooser fileChooser;
 
@@ -66,13 +66,14 @@ public class TextEditor extends JFrame implements ActionListener {
 
         this.setLayout(new BorderLayout());
 
-        textArea = new JTextArea();
-        textArea.setTabSize(4);
-        textArea.setLineWrap(true);
-        textArea.addKeyListener(new TextAreaListener(textArea));
+        textPane = new JTextPane();
+        // textPane.setTabSize(4);
+        // textPane.setLineWrap(true);
+        // textPane.addKeyListener(new TextAreaListener(textPane));
+        textPane.getDocument().addDocumentListener(new TextPaneDocumentListener(textPane));
         
 
-        scrollPane = new JScrollPane(textArea,
+        scrollPane = new JScrollPane(textPane,
                 JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         this.add(scrollPane, BorderLayout.CENTER);
 
@@ -83,7 +84,7 @@ public class TextEditor extends JFrame implements ActionListener {
 
         fileChooser = new JFileChooser();
 
-        textArea.setFont(ExternalFonts.getJetBrainsFont(16));
+        textPane.setFont(ExternalFonts.getJetBrainsFont(16));
         this.setVisible(true);
     }
 
@@ -126,23 +127,23 @@ public class TextEditor extends JFrame implements ActionListener {
 
         cut = new JMenuItem("Cut");
         cut.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, KeyEvent.CTRL_DOWN_MASK));
-        cut.addActionListener(e -> textArea.cut());
+        cut.addActionListener(e -> textPane.cut());
         edit.add(cut);
 
         copy = new JMenuItem("Copy");
         copy.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.CTRL_DOWN_MASK));
-        copy.addActionListener(e -> textArea.copy());
+        copy.addActionListener(e -> textPane.copy());
         edit.add(copy);
 
         paste = new JMenuItem("Paste");
         paste.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_DOWN_MASK));
-        paste.addActionListener(e -> textArea.paste());
+        paste.addActionListener(e -> textPane.paste());
         edit.add(paste);
 
         selectAll = new JMenuItem("Select All");
         selectAll.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.CTRL_DOWN_MASK));
 
-        selectAll.addActionListener(e -> textArea.selectAll());
+        selectAll.addActionListener(e -> textPane.selectAll());
         edit.add(selectAll);
 
         menuBar.add(edit);
@@ -154,11 +155,11 @@ public class TextEditor extends JFrame implements ActionListener {
         lineWrap = new JMenuItem("Word Wrap");
         lineWrap.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, KeyEvent.CTRL_DOWN_MASK));
         lineWrap.addActionListener(e -> {
-            if (textArea.getLineWrap()) {
-                textArea.setLineWrap(false);
-            } else {
-                textArea.setLineWrap(true);
-            }
+            // if (textPane.getLineWrap()) {
+            //     textPane.setLineWrap(false);
+            // } else {
+            //     textPane.setLineWrap(true);
+            // }
         });
         format.add(lineWrap);
 
@@ -184,7 +185,7 @@ public class TextEditor extends JFrame implements ActionListener {
     }
     public void printFileAction(ActionEvent e) {
         try {
-            textArea.print(); // Print the text area
+            textPane.print(); // Print the text area
         } catch (PrinterException ex) {
             ex.printStackTrace();
         }
@@ -228,7 +229,7 @@ public class TextEditor extends JFrame implements ActionListener {
                 text.append((char)ch);
             }
 
-            textArea.setText(text.toString());
+            textPane.setText(text.toString());
             reader.close();
         }
 
@@ -250,7 +251,7 @@ public class TextEditor extends JFrame implements ActionListener {
 
         try {
             writer = new FileWriter(selectedFile);
-            writer.write(textArea.getText());
+            writer.write(textPane.getText());
             writer.close();
         }
         
@@ -294,21 +295,21 @@ public class TextEditor extends JFrame implements ActionListener {
     }
 
     public void fontStyleAction(ActionEvent e) {
-        Font currFont = textArea.getFont();
+        Font currFont = textPane.getFont();
         String fontName = (String) allFonts.getSelectedItem();
 
         if(fontName.equals("JetBrains Mono")) {
-            textArea.setFont(ExternalFonts.getJetBrainsFont(currFont.getSize()));
+            textPane.setFont(ExternalFonts.getJetBrainsFont(currFont.getSize()));
         }
 
-        textArea.setFont(new Font(fontName, Font.PLAIN, currFont.getSize()));
+        textPane.setFont(new Font(fontName, Font.PLAIN, currFont.getSize()));
     }
    
     public void fontSizeAction(ChangeEvent e) {
         int fontSize = (int) fontSizeSpinner.getValue();
-        Font currFont = textArea.getFont();
+        Font currFont = textPane.getFont();
 
-        textArea.setFont(new Font(currFont.getName(), Font.PLAIN, fontSize));
+        textPane.setFont(new Font(currFont.getName(), Font.PLAIN, fontSize));
     }
 
     
@@ -317,7 +318,7 @@ public class TextEditor extends JFrame implements ActionListener {
 
         if(e.getSource()==colorButton){
         Color color = JColorChooser.showDialog(null, "Pick a Color", Color.BLACK);
-           textArea.setForeground(color);
+           textPane.setForeground(color);
       }
   }
 }
