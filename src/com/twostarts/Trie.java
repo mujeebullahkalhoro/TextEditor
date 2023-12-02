@@ -26,7 +26,7 @@ public class Trie {
 
     private static Node root = new Node();
 
-    private static void insert(String word) {
+    public  void insert(String word) {
         Node current = root;
 
         for (int i = 0; i < word.length(); i++) {
@@ -74,13 +74,14 @@ public class Trie {
         return true;
     }
 
-    public static void loadWords() throws FileNotFoundException {
+    public  void loadWords() throws FileNotFoundException {
         File words = new File("src/com/twostarts/20k.txt");
 
-        Scanner sc = new Scanner(words);
-        while (sc.hasNextLine()) {
-            String word = sc.nextLine();
-            insert(word);
+        try (Scanner sc = new Scanner(words)) {
+            while (sc.hasNextLine()) {
+                String word = sc.nextLine();
+                insert(word);
+            }
         }
     }
 
@@ -118,20 +119,5 @@ public class Trie {
         }
     }
 
-    public static void main(String[] args) throws FileNotFoundException {
-        Trie trie = new Trie();
-
-        File words = new File("C:\\Users\\bhand\\Desktop\\dsaproject\\src\\com\\twostarts\\20k.txt");
-
-        Scanner sc = new Scanner(words);
-        while (sc.hasNextLine()) {
-            String word = sc.nextLine();
-            trie.insert(word);
-        }
-        String s = "would you t";
-        s = s.trim();
-        System.out.println(s);
-        trie.loadWords();
-        System.out.println(trie.search("would"));
-    }
+  
 }
