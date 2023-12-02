@@ -26,7 +26,7 @@ public class Trie {
 
     private static Node root = new Node();
 
-    public  void insert(String word) {
+    public static void insert(String word) {
         Node current = root;
 
         for (int i = 0; i < word.length(); i++) {
@@ -50,7 +50,7 @@ public class Trie {
         }
     }
 
-    public boolean search(String key) {
+    public static boolean search(String key) {
         Node current = root;
         for (int i = 0; i < key.length(); i++) {
             char currentChar = key.charAt(i);
@@ -74,7 +74,7 @@ public class Trie {
         return true;
     }
 
-    public  void loadWords() throws FileNotFoundException {
+    public static void loadWords() throws FileNotFoundException {
         File words = new File("src/com/twostarts/20k.txt");
 
         try (Scanner sc = new Scanner(words)) {
@@ -117,6 +117,18 @@ public class Trie {
                         currentPrefix + ch, suggestions);
             }
         }
+    }
+    public static void main(String[] args) throws FileNotFoundException {
+        
+         File words = new File("src/com/twostarts/20k.txt");
+        
+        try (Scanner sc = new Scanner(words)) {
+            while (sc.hasNextLine()) {
+                String word = sc.nextLine();
+                insert(word);
+            }
+        }
+        System.out.println(search("suhail"));
     }
 
   

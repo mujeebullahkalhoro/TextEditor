@@ -41,42 +41,7 @@ class TextPaneDocumentListener implements DocumentListener {
     // Plain text components do not fire these events
   }
 
-  // private void updateUnderline(DocumentEvent e) {
-  // SwingUtilities.invokeLater(() -> {
-  // StyledDocument doc = textPane.getStyledDocument();
-
-  // // Remove underlining from the entire document
-  // doc.setCharacterAttributes(0, doc.getLength(), new SimpleAttributeSet(),
-  // true);
-
-  // try {
-  // String text = doc.getText(0, doc.getLength());
-  // int start = 0;
-
-  // while (start < text.length()) {
-  // int index = text.indexOf(" ", start);
-  // if (index == -1) {
-  // index = text.length();
-  // }
-
-  // String word = text.substring(start, index);
-  // AttributeSet attrs = doc.getCharacterElement(start).getAttributes();
-
-  // if (!StyleConstants.isUnderline(attrs) && !trie.search(word)) {
-  // // Only underline if it's not already underlined and the word is misspelled
-  // doc.setCharacterAttributes(start, index - start, getUnderlineAttribute(),
-  // false);
-  // doc.setCharacterAttributes(start, index - start, getUnderlineAttribute(),
-  // true);
-  // }
-
-  // start = index + 1;
-  // }
-  // } catch (BadLocationException ex) {
-  // ex.printStackTrace();
-  // }
-  // });
-  // }
+  
 
   private SimpleAttributeSet getUnderlineAttribute() {
     SimpleAttributeSet underline = new SimpleAttributeSet();
@@ -111,7 +76,7 @@ class TextPaneDocumentListener implements DocumentListener {
           String word = text.substring(start, index);
           AttributeSet attrs = doc.getCharacterElement(start).getAttributes();
 
-          if (!StyleConstants.isUnderline(attrs) && !trie.search(word)) {
+          if (!StyleConstants.isUnderline(attrs) && !Trie.search(word)) {
             // Only underline if it's not already underlined and the word is misspelled
             doc.setCharacterAttributes(
               start,
@@ -171,13 +136,12 @@ class TextPaneDocumentListener implements DocumentListener {
       menuItem.addActionListener(actionEvent -> {
         String filePath = "src/com/twostarts/20k.txt";
 
-        try (FileWriter writer = new FileWriter(filePath)) {
-          writer.write(misspelledWord);
-          trie.insert(misspelledWord);
+        try (FileWriter writer = new FileWriter(filePath, true)) {
+          writer.write("\n"+misspelledWord);
+          Trie.insert(misspelledWord);
         } catch (IOException e) {
           System.err.println(
-            "An error occur while writing to the file :" + e.getMessage()
-          );
+            "An error occur while writing to the file :" + e.getMessage() );
         }
 
         // replaceMisspelledWord(misspelledWord, suggestion);
@@ -195,7 +159,7 @@ class TextPaneDocumentListener implements DocumentListener {
       try {
         StyledDocument doc = textPane.getStyledDocument();
         int start = doc.getText(0, doc.getLength()).indexOf(misspelledWord);
-        // int end = start + misspelledWord.length();
+    
 
         doc.remove(start, misspelledWord.length());
         doc.insertString(start, replacement, null);
