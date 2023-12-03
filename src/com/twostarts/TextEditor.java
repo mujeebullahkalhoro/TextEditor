@@ -19,6 +19,7 @@ public class TextEditor extends JFrame implements ActionListener {
     JMenuBar menuBar;
 
     JMenu file;
+    JMenuItem newFile;
     JMenuItem openFile;
     JMenuItem saveFile;
     JMenuItem printFile;
@@ -26,20 +27,16 @@ public class TextEditor extends JFrame implements ActionListener {
 
     JMenu edit;
     JMenuItem cut;
-    JMenuItem copy;    
+    JMenuItem copy;
     JMenuItem paste;
     JMenuItem selectAll;
-
-    JMenu format;
-    JMenuItem lineWrap;
 
     JMenu theme;
     JMenuItem light;
     JMenuItem dark;
     // ---------------------- //
 
-
-    // top bar;             
+    // top bar;
     private JPanel topPanel;
     private JComboBox<String> allFonts;
     private JSpinner fontSizeSpinner;
@@ -58,20 +55,14 @@ public class TextEditor extends JFrame implements ActionListener {
 
     public TextEditor() throws FileNotFoundException {
         this.setTitle("Text Editor");
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.setMinimumSize(new Dimension(600, 500));
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        //setBackground(Color.DARK_GRAY);
-            
 
         this.setLayout(new BorderLayout());
 
         textPane = new JTextPane();
-        // textPane.setTabSize(4);
-        // textPane.setLineWrap(true);
-        // textPane.addKeyListener(new TextAreaListener(textPane));
         textPane.getDocument().addDocumentListener(new TextPaneDocumentListener(textPane));
-        
 
         scrollPane = new JScrollPane(textPane,
                 JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -85,16 +76,22 @@ public class TextEditor extends JFrame implements ActionListener {
         fileChooser = new JFileChooser();
 
         textPane.setFont(ExternalFonts.getJetBrainsFont(16));
+        this.setLocationRelativeTo(null);
         this.setVisible(true);
     }
 
     private void setMenuBar() {
 
         menuBar = new JMenuBar();
-         
+
         // file Menu
         file = new JMenu("File");
         file.setMnemonic('F');
+
+        newFile = new JMenuItem("New File");
+        newFile.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.CTRL_DOWN_MASK));
+        newFile.addActionListener(this::newFileAction);
+        file.add(newFile);
 
         openFile = new JMenuItem("Open File");
         openFile.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK));
@@ -111,12 +108,10 @@ public class TextEditor extends JFrame implements ActionListener {
         printFile.addActionListener(this::printFileAction); // Add action listener
         file.add(printFile);
 
-          
         exit = new JMenuItem("Exit");
         exit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, KeyEvent.CTRL_DOWN_MASK));
         exit.addActionListener(this::exitAction); // link to the exit method
         file.add(exit);
-
 
         menuBar.add(file);
         // -----------------------------------------------
@@ -149,23 +144,6 @@ public class TextEditor extends JFrame implements ActionListener {
         menuBar.add(edit);
         // -----------------------------------------------
 
-        // Format Menu
-        format = new JMenu("Format");
-
-        lineWrap = new JMenuItem("Word Wrap");
-        lineWrap.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, KeyEvent.CTRL_DOWN_MASK));
-        lineWrap.addActionListener(e -> {
-            // if (textPane.getLineWrap()) {
-            //     textPane.setLineWrap(false);
-            // } else {
-            //     textPane.setLineWrap(true);
-            // }
-        });
-        format.add(lineWrap);
-
-        menuBar.add(format);
-        // -----------------------------------------------
-
         // Theme;
         theme = new JMenu("Theme");
         theme.setMnemonic('T');
@@ -183,6 +161,16 @@ public class TextEditor extends JFrame implements ActionListener {
         menuBar.add(theme);
         // -----------------------------------------------
     }
+
+    public void newFileAction(ActionEvent e) {
+        try {
+            UIManager.setLookAndFeel(new FlatMacDarkLaf());
+            new TextEditor();
+        } catch (Exception e1) {
+            e1.printStackTrace();
+        }
+    }
+
     public void printFileAction(ActionEvent e) {
         try {
             textPane.print(); // Print the text area
@@ -195,27 +183,27 @@ public class TextEditor extends JFrame implements ActionListener {
         try {
             UIManager.setLookAndFeel(new FlatMacDarkLaf());
             SwingUtilities.updateComponentTreeUI(TextEditor.this);
-        } catch (UnsupportedLookAndFeelException ex) {}
+        } catch (UnsupportedLookAndFeelException ex) {
+        }
     }
 
     public void lightThemeAction(ActionEvent e) {
         try {
             UIManager.setLookAndFeel(new FlatMacLightLaf());
             SwingUtilities.updateComponentTreeUI(TextEditor.this);
-        } catch (UnsupportedLookAndFeelException ex) {}
+        } catch (UnsupportedLookAndFeelException ex) {
+        }
     }
-    
 
     public void exitAction(ActionEvent e) {
-        //if(e.getSource()==exit)
         System.exit(0); // Exit the application
     }
-    
+
     public void openFileAction(ActionEvent e) {
 
         int action = fileChooser.showOpenDialog(this);
 
-        if(action != JFileChooser.APPROVE_OPTION) {
+        if (action != JFileChooser.APPROVE_OPTION) {
             return;
         }
 
@@ -224,27 +212,27 @@ public class TextEditor extends JFrame implements ActionListener {
         StringBuilder text = new StringBuilder("");
         try {
             reader = new FileReader(selectedFile);
-            int ch=0;
-            while((ch=reader.read()) != -1) {
-                text.append((char)ch);
+            int ch = 0;
+            while ((ch = reader.read()) != -1) {
+                text.append((char) ch);
             }
 
             textPane.setText(text.toString());
             reader.close();
         }
 
-        catch (FileNotFoundException ex) {}
-        catch (IOException ex) {}
-  }
-    
-     
+        catch (FileNotFoundException ex) {
+        } catch (IOException ex) {
+        }
+    }
+
     public void saveFileAction(ActionEvent e) {
-        
+
         File selectedFile;
-        if( (selectedFile=fileChooser.getSelectedFile()) == null ) {
+        if ((selectedFile = fileChooser.getSelectedFile()) == null) {
             int respond = fileChooser.showSaveDialog(this);
 
-            if(respond != JFileChooser.APPROVE_OPTION) {
+            if (respond != JFileChooser.APPROVE_OPTION) {
                 return;
             }
         }
@@ -254,24 +242,25 @@ public class TextEditor extends JFrame implements ActionListener {
             writer.write(textPane.getText());
             writer.close();
         }
-        
-        catch (IOException e1) {}
+
+        catch (IOException e1) {
+        }
     }
-    
 
     private void setTopPanel() {
         topPanel = new JPanel();
         topPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 30, 3));
-        
+
         // getting all fonts of the system;
-        GraphicsEnvironment ge=GraphicsEnvironment.getLocalGraphicsEnvironment();
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         fonts = ge.getAvailableFontFamilyNames();
 
         // setting all fonts in combo box;
         allFonts = new JComboBox<>();
         allFonts.setFont(ExternalFonts.getJetBrainsFont(12));
         allFonts.addItem("JetBrains Mono");
-        for(String font: fonts) allFonts.addItem(font);
+        for (String font : fonts)
+            allFonts.addItem(font);
         allFonts.setPreferredSize(new Dimension(150, 25));
         allFonts.addActionListener(this::fontStyleAction);
         allFonts.setSelectedItem("JetBrains Mono");
@@ -290,7 +279,7 @@ public class TextEditor extends JFrame implements ActionListener {
         colorButton.addActionListener(this);
         colorButton.setPreferredSize(new Dimension(150, 25));
         topPanel.add(colorButton);
-        
+
         this.add(topPanel, BorderLayout.NORTH);
     }
 
@@ -298,13 +287,13 @@ public class TextEditor extends JFrame implements ActionListener {
         Font currFont = textPane.getFont();
         String fontName = (String) allFonts.getSelectedItem();
 
-        if(fontName.equals("JetBrains Mono")) {
+        if (fontName.equals("JetBrains Mono")) {
             textPane.setFont(ExternalFonts.getJetBrainsFont(currFont.getSize()));
         }
 
         textPane.setFont(new Font(fontName, Font.PLAIN, currFont.getSize()));
     }
-   
+
     public void fontSizeAction(ChangeEvent e) {
         int fontSize = (int) fontSizeSpinner.getValue();
         Font currFont = textPane.getFont();
@@ -312,13 +301,12 @@ public class TextEditor extends JFrame implements ActionListener {
         textPane.setFont(new Font(currFont.getName(), Font.PLAIN, fontSize));
     }
 
-    
     @Override
-  public void actionPerformed(ActionEvent e){
+    public void actionPerformed(ActionEvent e) {
 
-        if(e.getSource()==colorButton){
-        Color color = JColorChooser.showDialog(null, "Pick a Color", Color.BLACK);
-           textPane.setForeground(color);
-      }
-  }
+        if (e.getSource() == colorButton) {
+            Color color = JColorChooser.showDialog(null, "Pick a Color", Color.BLACK);
+            textPane.setForeground(color);
+        }
+    }
 }

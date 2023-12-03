@@ -22,7 +22,7 @@ class Node {
     }
 }
 
-public class Trie {
+public class SpellChecker {
 
     private static Node root = new Node();
 
@@ -85,7 +85,7 @@ public class Trie {
         }
     }
 
-    public List<String> getSuggestions(String word) {
+    public static List<String> getSuggestions(String word) {
         if (word.isEmpty()) {
             return Collections.emptyList(); // Return an empty list if the input string is empty
         }
@@ -94,7 +94,7 @@ public class Trie {
         return new ArrayList<>(suggestions);
     }
 
-    private void collectSuggestions(Node node, String remainingWord, String currentPrefix,
+    private static void collectSuggestions(Node node, String remainingWord, String currentPrefix,
             PriorityQueue<String> suggestions) {
         if (node == null) {
             return;
@@ -118,18 +118,4 @@ public class Trie {
             }
         }
     }
-    public static void main(String[] args) throws FileNotFoundException {
-        
-         File words = new File("src/com/twostarts/20k.txt");
-        
-        try (Scanner sc = new Scanner(words)) {
-            while (sc.hasNextLine()) {
-                String word = sc.nextLine();
-                insert(word);
-            }
-        }
-        System.out.println(search("suhail"));
-    }
-
-  
 }
