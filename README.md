@@ -1,6 +1,6 @@
 # Text Editor
 
-![Text Editor Screenshot](path/to/screenshot.png)
+![Text Editor Screenshot](https://github.com/mujeebullahkalhoro/dsaproject/blob/main/image.png)
 
 A versatile and user-friendly text editor built in Java using Swing. This editor offers a range of features, from basic file operations to advanced text formatting and real-time spell-checking.
 
