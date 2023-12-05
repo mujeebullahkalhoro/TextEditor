@@ -1,9 +1,7 @@
 package com.twostarts;
-
 import com.formdev.flatlaf.themes.FlatMacDarkLaf;
 import com.formdev.flatlaf.themes.FlatMacLightLaf;
 import fonts.ExternalFonts;
-
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import java.awt.*;
@@ -250,6 +248,7 @@ public class TextEditor extends JFrame implements ActionListener {
         }
 
         try {
+            selectedFile = fileChooser.getSelectedFile();
             writer = new FileWriter(selectedFile);
             writer.write(textPane.getText());
             writer.close();

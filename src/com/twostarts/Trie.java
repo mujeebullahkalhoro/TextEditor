@@ -128,7 +128,7 @@ public class Trie {
                 insert(word);
             }
         }
-        System.out.println(search("suhail"));
+        System.out.println(search("they"));
     }
 
   

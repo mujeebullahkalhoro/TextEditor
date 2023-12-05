@@ -1,5 +1,4 @@
 package com.twostarts;
-
 import javax.swing.UIManager;
 import com.formdev.flatlaf.themes.FlatMacDarkLaf;
 
