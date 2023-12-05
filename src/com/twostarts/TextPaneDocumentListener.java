@@ -17,9 +17,6 @@ import javax.swing.text.*;
 
 class TextPaneDocumentListener implements DocumentListener {
 
-  StringBuilder currentWord = new StringBuilder();
-  Trie trie = new Trie();
-
   private JTextPane textPane;
 
   TextPaneDocumentListener(JTextPane textPane) {
@@ -41,11 +38,8 @@ class TextPaneDocumentListener implements DocumentListener {
     // Plain text components do not fire these events
   }
 
-  
-
   private SimpleAttributeSet getUnderlineAttribute() {
     SimpleAttributeSet underline = new SimpleAttributeSet();
-    StyleConstants.setForeground(underline, Color.RED);
     StyleConstants.setForeground(underline, Color.RED);
     StyleConstants.setUnderline(underline, true);
     return underline;
@@ -56,12 +50,7 @@ class TextPaneDocumentListener implements DocumentListener {
       StyledDocument doc = textPane.getStyledDocument();
 
       // Remove underlining from the entire document
-      doc.setCharacterAttributes(
-        0,
-        doc.getLength(),
-        new SimpleAttributeSet(),
-        true
-      );
+      doc.setCharacterAttributes(0, doc.getLength(), new SimpleAttributeSet(), true);
 
       try {
         String text = doc.getText(0, doc.getLength());
@@ -76,20 +65,10 @@ class TextPaneDocumentListener implements DocumentListener {
           String word = text.substring(start, index);
           AttributeSet attrs = doc.getCharacterElement(start).getAttributes();
 
-          if (!StyleConstants.isUnderline(attrs) && !Trie.search(word)) {
+          if (!StyleConstants.isUnderline(attrs) && !SpellChecker.search(word.toLowerCase())) {
             // Only underline if it's not already underlined and the word is misspelled
-            doc.setCharacterAttributes(
-              start,
-              index - start,
-              getUnderlineAttribute(),
-              false
-            );
-            doc.setCharacterAttributes(
-              start,
-              index - start,
-              getUnderlineAttribute(),
-              true
-            );
+            doc.setCharacterAttributes(start, index - start, getUnderlineAttribute(), false);
+            doc.setCharacterAttributes(start, index - start, getUnderlineAttribute(), true);
 
             // Add a right-click listener to show the suggestion popup
             textPane.addMouseListener(new SuggestionMouseListener(word));
@@ -108,7 +87,7 @@ class TextPaneDocumentListener implements DocumentListener {
     private final String misspelledWord;
 
     public SuggestionMouseListener(String misspelledWord) {
-      this.misspelledWord = misspelledWord;
+      this.misspelledWord = misspelledWord.toLowerCase();
     }
 
     @Override
@@ -120,9 +99,7 @@ class TextPaneDocumentListener implements DocumentListener {
 
     private void showSuggestionPopup(Component component, int x, int y) {
       JPopupMenu popupMenu = new JPopupMenu();
-      ArrayList<String> suggestions = (ArrayList<String>) trie.getSuggestions(
-        misspelledWord
-      );
+      ArrayList<String> suggestions = (ArrayList<String>) SpellChecker.getSuggestions(misspelledWord);
 
       for (String suggestion : suggestions) {
         JMenuItem menuItem = new JMenuItem(suggestion);
@@ -137,11 +114,10 @@ class TextPaneDocumentListener implements DocumentListener {
         String filePath = "src/com/twostarts/20k.txt";
 
         try (FileWriter writer = new FileWriter(filePath, true)) {
-          writer.write("\n"+misspelledWord);
-          Trie.insert(misspelledWord);
+          writer.write("\n" + misspelledWord);
+          SpellChecker.insert(misspelledWord);
         } catch (IOException e) {
-          System.err.println(
-            "An error occur while writing to the file :" + e.getMessage() );
+          System.err.println("An error occur while writing to the file :" + e.getMessage());
         }
 
         // replaceMisspelledWord(misspelledWord, suggestion);
@@ -152,14 +128,10 @@ class TextPaneDocumentListener implements DocumentListener {
       popupMenu.show(component, x, y);
     }
 
-    private void replaceMisspelledWord(
-      String misspelledWord,
-      String replacement
-    ) {
+    private void replaceMisspelledWord(String misspelledWord, String replacement) {
       try {
         StyledDocument doc = textPane.getStyledDocument();
         int start = doc.getText(0, doc.getLength()).indexOf(misspelledWord);
-    
 
         doc.remove(start, misspelledWord.length());
         doc.insertString(start, replacement, null);
